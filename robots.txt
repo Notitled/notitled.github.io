@@ -1,8 +1,8 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://notitled.github.io/sitemap.xml
-Sitemap: https://notitled.github.io/feed.xml
+Sitemap: https://sadcadf.github.io/sitemap.xml
+Sitemap: https://sadcadf.github.io/feed.xml
 
 
 # Disallow drafts

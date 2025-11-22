@@ -421,23 +421,23 @@ class Blog {
     updatePageMeta() {
         let title = 'Notitled - Личный блог';
         let description = 'Личный минималистичный блог о технологиях, разработке и творчестве';
-        let canonicalUrl = 'https://notitled.github.io/';
+        let canonicalUrl = 'https://sadcadf.github.io/';
 
         if (this.currentView === 'post' && this.currentSlug) {
             const post = this.posts.find(p => p.slug === this.currentSlug);
             if (post) {
                 title = `${post.title} - Notitled`;
                 description = post.excerpt;
-                canonicalUrl = `https://notitled.github.io/#${this.currentSlug}`;
+                canonicalUrl = `https://sadcadf.github.io/#${this.currentSlug}`;
             }
         } else if (this.currentView === 'contacts') {
             title = 'Контакты - Notitled';
             description = 'Свяжитесь со мной';
-            canonicalUrl = 'https://notitled.github.io/#contacts';
+            canonicalUrl = 'https://sadcadf.github.io/#contacts';
         } else if (this.currentView === 'search') {
             title = 'Поиск - Notitled';
             description = 'Поиск по постам блога';
-            canonicalUrl = 'https://notitled.github.io/#search';
+            canonicalUrl = 'https://sadcadf.github.io/#search';
         }
 
         document.title = title;
@@ -499,7 +499,7 @@ class Blog {
                     "author": {
                         "@type": "Person",
                         "name": "Notitled",
-                        "url": "https://notitled.github.io"
+                        "url": "https://sadcadf.github.io"
                     },
                     "publisher": {
                         "@type": "Person",
@@ -507,14 +507,14 @@ class Blog {
                     },
                     "mainEntityOfPage": {
                         "@type": "WebPage",
-                        "@id": `https://notitled.github.io/#${this.currentSlug}`
+                        "@id": `https://sadcadf.github.io/#${this.currentSlug}`
                     },
-                    "url": `https://notitled.github.io/#${this.currentSlug}`,
+                    "url": `https://sadcadf.github.io/#${this.currentSlug}`,
                     "inLanguage": "ru-RU"
                 };
 
                 if (post.preview) {
-                    structuredData.image = `https://notitled.github.io/${post.preview}`;
+                    structuredData.image = `https://sadcadf.github.io/${post.preview}`;
                 }
             }
         }
