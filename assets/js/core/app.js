@@ -118,8 +118,8 @@ class Blog {
         if (footerText) {
             const currentYear = new Date().getFullYear();
             footerText.innerHTML = i18n.getLanguage() === 'ru'
-                ? `&copy; ${currentYear} Notitled. Создано с любовью к минимализму.`
-                : `&copy; ${currentYear} Notitled. Built with love for minimalism.`;
+                ? `&copy; ${currentYear} Notitled.`
+                : `&copy; ${currentYear} Notitled.`;
         }
     }
 
