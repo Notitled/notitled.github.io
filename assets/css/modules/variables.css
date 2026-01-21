@@ -38,8 +38,8 @@
     --transition-base: 250ms ease;
 
     /* Layout */
-    --max-width: 720px;
-    --max-width-wide: 1100px;
+    --max-width: 900px;
+    --max-width-wide: 1200px;
     --border-radius: 8px;
 }
 

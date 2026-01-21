@@ -3,15 +3,19 @@
 // ============================================
 
 import { CONFIG } from '../core/config.js';
+import { i18n } from '../features/language.js';
 
 /**
- * Format date to Russian locale string
+ * Format date to current locale string
  * @param {string} dateString - ISO date string
  * @returns {string} Formatted date
  */
 export function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU', {
+    const lang = i18n.getLanguage();
+    const locale = lang === 'ru' ? 'ru-RU' : 'en-US';
+
+    return date.toLocaleDateString(locale, {
         year: 'numeric',
         month: 'long',
         day: 'numeric'

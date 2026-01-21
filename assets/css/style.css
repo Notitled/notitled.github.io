@@ -1137,17 +1137,18 @@ body {
    WIDESCREEN (1200px+)
    ======================================== */
 @media (min-width: 1200px) {
-    :root {
-        --max-width: 900px;
-    }
-
     .posts-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--spacing-xl);
+        grid-template-columns: 1fr;
+        gap: var(--spacing-2xl);
     }
 
     .post-card-preview {
-        height: 200px;
+        height: auto;
+        aspect-ratio: 16 / 9;
+    }
+
+    .post-card-title {
+        font-size: var(--font-size-2xl);
     }
 }
 
@@ -1156,15 +1157,10 @@ body {
    ======================================== */
 @media (min-width: 1600px) {
     :root {
-        --max-width: var(--max-width-wide);
-    }
-
-    .posts-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .post-card-preview {
-        height: 180px;
+        /* Layout */
+        --max-width: 900px;
+        --max-width-wide: 1200px;
+        --border-radius: 8px;
     }
 
     .post-card-title {
