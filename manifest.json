@@ -1,7 +1,7 @@
 {
-    "name": "Notitled - Личный блог",
-    "short_name": "Notitled",
-    "description": "Минималистичный личный блог о технологиях и творчестве",
+    "name": "Notitled",
+    "short_name": "101",
+    "description": "love tech",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
