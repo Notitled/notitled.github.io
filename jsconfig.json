@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "esnext",
+        "checkJs": true,
+        "lib": [
+            "es6",
+            "dom"
+        ],
+        "strict": false
+    },
+    "include": [
+        "assets/js/**/*",
+        "sw.js"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

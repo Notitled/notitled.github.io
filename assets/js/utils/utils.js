@@ -2,7 +2,7 @@
 // UTILITY FUNCTIONS
 // ============================================
 
-import { CONFIG } from './config.js';
+import { CONFIG } from '../core/config.js';
 
 /**
  * Format date to Russian locale string

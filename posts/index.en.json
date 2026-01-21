@@ -1,0 +1,18 @@
+[
+    {
+        "slug": "first-post",
+        "title": "Welcome to my Blog!",
+        "excerpt": "This is my first post in a new minimalist blog. Here I will explain how easy it is to add new articles using Markdown files.",
+        "date": "2025-11-20",
+        "preview": "posts/images/first-post-preview.jpg",
+        "category": "General"
+    },
+    {
+        "slug": "markdown-guide",
+        "title": "Markdown Guide",
+        "excerpt": "A quick cheat sheet for Markdown syntax for writing blog posts. Headers, lists, links, code, and much more.",
+        "date": "2025-11-19",
+        "preview": "",
+        "category": "Tutorials"
+    }
+]

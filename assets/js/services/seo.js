@@ -2,7 +2,7 @@
 // SEO MANAGER - Meta Tags & Structured Data
 // ============================================
 
-import { BLOG_INFO } from './config.js';
+import { BLOG_INFO } from '../core/config.js';
 
 /**
  * Manages SEO meta tags and structured data

@@ -2,6 +2,9 @@
 // TABLE OF CONTENTS MODULE
 // ============================================
 
+import { CONFIG } from '../core/config.js';
+import { i18n } from '../features/language.js';
+
 /**
  * Generate Table of Contents from HTML content
  */
@@ -9,9 +12,10 @@ export class TOCGenerator {
     /**
      * Extract headings and generate TOC
      * @param {string} htmlContent - Parsed post HTML
-     * @returns {{toc: Array, html: string}} TOC data and modified HTML
+     * @returns {{toc: import('../core/types.ts').TOCHeading[], html: string}} TOC data and modified HTML
      */
     generate(htmlContent) {
+        /** @type {import('../core/types.ts').TOCHeading[]} */
         const headings = [];
         let headingIndex = 0;
 
@@ -45,7 +49,7 @@ export class TOCGenerator {
 
     /**
      * Render TOC as HTML
-     * @param {Array} headings - TOC headings
+     * @param {import('../core/types.ts').TOCHeading[]} headings - TOC headings
      * @returns {string} TOC HTML
      */
     render(headings) {
@@ -58,8 +62,8 @@ export class TOCGenerator {
         `).join('');
 
         return `
-            <nav class="toc" aria-label="Оглавление">
-                <h2 class="toc-title">Содержание</h2>
+            <nav class="toc" aria-label="${i18n.t('post.toc')}">
+                <h2 class="toc-title">${i18n.t('post.toc')}</h2>
                 <ul class="toc-list">
                     ${items}
                 </ul>

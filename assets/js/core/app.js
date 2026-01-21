@@ -3,15 +3,15 @@
 // ============================================
 
 import { CONFIG } from './config.js';
-import { calculateReadTime, debounce } from './utils.js';
-import { ThemeManager } from './theme.js';
+import { calculateReadTime, debounce } from '../utils/utils.js';
+import { ThemeManager } from '../features/theme.js';
 import { Router } from './router.js';
-import { PostsAPI } from './api.js';
-import { SEOManager } from './seo.js';
-import { TagsManager } from './tags.js';
-import { Paginator } from './pagination.js';
-import { TOCGenerator } from './toc.js';
-import { ShareManager } from './share.js';
+import { PostsAPI } from '../services/api.js';
+import { SEOManager } from '../services/seo.js';
+import { Paginator } from '../features/pagination.js';
+import { TOCGenerator } from '../features/toc.js';
+import { ShareManager } from '../features/share.js';
+import { i18n } from '../features/language.js';
 import {
     renderPostsList,
     renderPost,
@@ -19,9 +19,7 @@ import {
     renderSearchResults,
     renderContactsPage,
     renderError,
-    renderTagsPage,
-    renderTagPosts
-} from './templates.js';
+} from '../utils/templates.js';
 
 // Global Error Handlers
 window.addEventListener('error', (event) => {
@@ -40,13 +38,11 @@ class Blog {
         // DOM elements
         this.app = document.getElementById('app');
         this.loading = document.getElementById('loading');
-        this.scrollToTopBtn = document.getElementById('scroll-to-top');
 
         // Managers
         this.theme = new ThemeManager();
         this.api = new PostsAPI();
         this.seo = new SEOManager();
-        this.tags = new TagsManager([]);
         this.paginator = new Paginator();
         this.toc = new TOCGenerator();
         this.share = new ShareManager();
@@ -68,13 +64,12 @@ class Blog {
         this.share.init();
 
         // Setup UI
-        this.setupScrollToTop();
+        this.updateStaticTranslations();
+        this.setupLanguageToggle();
 
         // Load posts
         await this.api.loadPosts();
 
-        // Update tags manager with posts
-        this.tags.setPosts(this.api.getPosts());
 
         // Initialize router (handles initial route)
         this.router.init();
@@ -101,6 +96,46 @@ class Blog {
     }
 
     /**
+     * Update static translations in the DOM
+     */
+    updateStaticTranslations() {
+        const elements = document.querySelectorAll('[data-t]');
+        elements.forEach(el => {
+            const key = el.getAttribute('data-t');
+            if (key) {
+                el.textContent = i18n.t(key);
+            }
+        });
+
+        // Update language toggle text
+        const langToggleText = document.querySelector('.lang-text');
+        if (langToggleText) {
+            langToggleText.textContent = i18n.getLanguage().toUpperCase();
+        }
+
+        // Update footer
+        const footerText = document.querySelector('.footer p');
+        if (footerText) {
+            const currentYear = new Date().getFullYear();
+            footerText.innerHTML = i18n.getLanguage() === 'ru'
+                ? `&copy; ${currentYear} Notitled. Создано с любовью к минимализму.`
+                : `&copy; ${currentYear} Notitled. Built with love for minimalism.`;
+        }
+    }
+
+    /**
+     * Setup language toggle listener
+     */
+    setupLanguageToggle() {
+        const langToggle = document.getElementById('lang-toggle');
+        if (langToggle) {
+            langToggle.addEventListener('click', () => {
+                i18n.toggleLanguage();
+            });
+        }
+    }
+
+    /**
      * Register Service Worker for PWA
      */
     registerServiceWorker() {
@@ -117,6 +152,9 @@ class Blog {
 
     /**
      * Handle navigation events from router
+     * @param {string} view - Current view name
+     * @param {string|null} slug - Post slug or null
+     * @param {boolean} updateMeta - Whether to update SEO meta tags
      */
     async handleNavigation(view, slug, updateMeta) {
         if (updateMeta) {
@@ -124,56 +162,6 @@ class Blog {
             this.seo.update(view, post);
         }
         await this.render();
-    }
-
-    /**
-     * Setup scroll to top button
-     */
-    setupScrollToTop() {
-        if (!this.scrollToTopBtn) return;
-
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > CONFIG.SCROLL_THRESHOLD) {
-                this.scrollToTopBtn.classList.add('visible');
-            } else {
-                this.scrollToTopBtn.classList.remove('visible');
-            }
-
-            const { view } = this.router.getCurrentRoute();
-            if (view === 'post') {
-                this.updateReadingProgress();
-            }
-        });
-
-        this.scrollToTopBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-
-    /**
-     * Update reading progress bar
-     */
-    updateReadingProgress() {
-        const progressBar = document.querySelector('.reading-progress');
-        if (!progressBar) return;
-
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight - windowHeight;
-        const scrolled = (window.scrollY / documentHeight) * 100;
-
-        progressBar.style.width = `${Math.min(scrolled, 100)}%`;
-    }
-
-    /**
-     * Add reading progress bar to page
-     */
-    addReadingProgress() {
-        const existing = document.querySelector('.reading-progress');
-        if (existing) existing.remove();
-
-        const progressBar = document.createElement('div');
-        progressBar.className = 'reading-progress';
-        document.body.appendChild(progressBar);
     }
 
     /**
@@ -188,7 +176,11 @@ class Blog {
             this.tocObserver = null;
         }
 
-        const { view, slug, tag, page } = this.router.getCurrentRoute();
+        const route = this.router.getCurrentRoute();
+        const view = route.view;
+        const slug = route.slug;
+        const page = route.page;
+
         let content = '';
 
         switch (view) {
@@ -204,21 +196,11 @@ class Blog {
             case 'contacts':
                 content = renderContactsPage();
                 break;
-            case 'tags':
-                content = renderTagsPage(this.tags.getAllTags());
-                break;
-            case 'tag':
-                content = this.renderTagView(tag || slug);
-                break;
             default:
                 content = this.renderHome(page);
         }
 
-        // Remove reading progress bar if not on post page
-        if (view !== 'post') {
-            const existing = document.querySelector('.reading-progress');
-            if (existing) existing.remove();
-        }
+
 
         // Update DOM
         requestAnimationFrame(() => {
@@ -241,16 +223,10 @@ class Blog {
         return renderPostsList(items, pagination);
     }
 
-    /**
-     * Render posts filtered by tag
-     */
-    renderTagView(tagName) {
-        const posts = this.tags.getPostsByTag(tagName);
-        return renderTagPosts(tagName, posts);
-    }
 
     /**
-     * Render post view with loaded content and TOC
+     * Render post view
+     * @param {string} slug - Post slug
      */
     async renderPostView(slug) {
         const post = this.api.findBySlug(slug);
@@ -274,6 +250,7 @@ class Blog {
 
     /**
      * Setup dynamic event listeners after render
+     * @param {string} view - Current view name
      */
     setupDynamicListeners(view) {
         // Post card click handlers
@@ -286,8 +263,6 @@ class Blog {
             this.setupPaginationListeners();
         }
 
-        // Tag click handlers (prevent card navigation)
-        this.setupTagClickListeners();
 
         // Back button
         const backButton = this.app.querySelector('.back-button');
@@ -298,10 +273,8 @@ class Blog {
             });
         }
 
-        // Reading progress and TOC for posts
+        // TOC and Share for posts
         if (view === 'post') {
-            this.addReadingProgress();
-
             // Setup TOC scroll spy
             if (this.currentTOC && this.currentTOC.length > 0) {
                 this.tocObserver = this.toc.setupScrollSpy(this.currentTOC);
@@ -332,44 +305,33 @@ class Blog {
      * Setup post card click listeners
      */
     setupPostCardListeners() {
-        const cards = this.app.querySelectorAll('.post-card');
+        const cards = this.app ? this.app.querySelectorAll('.post-card') : [];
         cards.forEach(card => {
             card.addEventListener('click', (e) => {
-                // Don't navigate if clicking a tag
-                if (e.target.closest('.tag')) return;
+                const target = /** @type {HTMLElement} */ (e.target);
 
-                const slug = card.dataset.slug;
-                this.router.navigateTo('post', slug);
+                const htmlCard = /** @type {HTMLElement} */ (card);
+                const slug = htmlCard.dataset.slug;
+                if (slug) {
+                    this.router.navigateTo('post', slug);
+                }
             });
         });
     }
 
-    /**
-     * Setup tag click listeners
-     */
-    setupTagClickListeners() {
-        const tags = this.app.querySelectorAll('.tag[data-tag]');
-        tags.forEach(tag => {
-            tag.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const tagName = tag.dataset.tag;
-                this.router.navigateTo('tag', tagName);
-            });
-        });
-    }
 
     /**
      * Setup pagination button listeners
      */
     setupPaginationListeners() {
-        const pagination = this.app.querySelector('.pagination');
+        const pagination = this.app ? this.app.querySelector('.pagination') : null;
         if (!pagination) return;
 
         pagination.querySelectorAll('[data-page]').forEach(btn => {
             btn.addEventListener('click', () => {
-                const page = parseInt(btn.dataset.page);
-                if (page && !btn.disabled) {
+                const htmlBtn = /** @type {HTMLButtonElement} */ (btn);
+                const page = parseInt(htmlBtn.dataset.page || '1');
+                if (page && !htmlBtn.disabled) {
                     this.router.goToPage(page);
                 }
             });
@@ -380,19 +342,20 @@ class Blog {
      * Setup share button click listener
      */
     setupShareButton() {
-        const shareBtn = this.app.querySelector('.share-button');
+        const shareBtn = this.app ? this.app.querySelector('.share-button') : null;
         if (shareBtn) {
             shareBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
 
+                const htmlBtn = /** @type {HTMLElement} */ (shareBtn);
                 const post = {
-                    slug: shareBtn.dataset.slug,
-                    title: shareBtn.dataset.title,
-                    excerpt: shareBtn.dataset.excerpt
+                    slug: htmlBtn.dataset.slug || '',
+                    title: htmlBtn.dataset.title || '',
+                    excerpt: htmlBtn.dataset.excerpt || ''
                 };
 
-                this.share.open(post, shareBtn);
+                this.share.open(post, htmlBtn);
             });
         }
     }
@@ -412,7 +375,6 @@ class Blog {
 
             // Setup click handlers for result cards
             this.setupPostCardListeners();
-            this.setupTagClickListeners();
         });
 
         searchInput.addEventListener('input', (e) => {

@@ -1,0 +1,15 @@
+{
+    "name": "Notitled",
+    "title": "Notitled - Личный блог",
+    "url": "https://sadcadf.github.io/notitled.github.io",
+    "description": "Личный минималистичный блог о технологиях, разработке и творчестве",
+    "language": "ru-RU",
+    "author": "Notitled",
+    "email": "your.email@example.com",
+    "social": {
+        "telegram": "@yourusername",
+        "github": "yourusername",
+        "twitter": "@yourusername",
+        "linkedin": "yourusername"
+    }
+}

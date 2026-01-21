@@ -2,6 +2,8 @@
 // THEME MANAGER
 // ============================================
 
+import { CONFIG } from '../core/config.js';
+
 /**
  * Manages light/dark theme switching
  */

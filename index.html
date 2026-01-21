@@ -90,24 +90,29 @@
             <div class="header-content">
                 <h1 class="logo">Notitled</h1>
                 <nav class="nav" role="navigation" aria-label="Основная навигация">
-                    <a href="#" class="nav-link active" data-page="home"
-                        aria-label="Перейти на главную страницу">Главная</a>
-                    <a href="#" class="nav-link" data-page="search" aria-label="Поиск по постам">Поиск</a>
-                    <a href="#" class="nav-link" data-page="contacts"
-                        aria-label="Перейти на страницу контактов">Контакты</a>
+                    <a href="#" class="nav-link active" data-page="home" data-t="nav.home">Главная</a>
+                    <a href="#" class="nav-link" data-page="search" data-t="nav.search">Поиск</a>
+                    <a href="#" class="nav-link" data-page="contacts" data-t="nav.contacts">Контакты</a>
                 </nav>
 
-                <!-- Theme Toggle -->
-                <button class="theme-toggle" aria-label="Переключить тему оформления" title="Переключить тему">
-                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                        <path
-                            d="M10 2.5a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM10 15.5a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM3.5 10a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1zM15.5 10a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1zM5.05 5.05a1 1 0 011.414 0l.707.707a1 1 0 11-1.414 1.414l-.707-.707a1 1 0 010-1.414zM13.636 13.636a1 1 0 011.414 0l.707.707a1 1 0 11-1.414 1.414l-.707-.707a1 1 0 010-1.414zM5.05 14.95a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM13.636 6.364a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0z" />
-                        <circle cx="10" cy="10" r="3" />
-                    </svg>
-                    <svg class="moon-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-                    </svg>
-                </button>
+                <div class="header-actions">
+                    <!-- Language Toggle -->
+                    <button class="lang-toggle" id="lang-toggle" aria-label="Switch Language" title="Change language">
+                        <span class="lang-text">RU</span>
+                    </button>
+
+                    <!-- Theme Toggle -->
+                    <button class="theme-toggle" aria-label="Переключить тему оформления" title="Переключить тему">
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path
+                                d="M10 2.5a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM10 15.5a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM3.5 10a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1zM15.5 10a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1zM5.05 5.05a1 1 0 011.414 0l.707.707a1 1 0 11-1.414 1.414l-.707-.707a1 1 0 010-1.414zM13.636 13.636a1 1 0 011.414 0l.707.707a1 1 0 11-1.414 1.414l-.707-.707a1 1 0 010-1.414zM5.05 14.95a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM13.636 6.364a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0z" />
+                            <circle cx="10" cy="10" r="3" />
+                        </svg>
+                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -118,25 +123,16 @@
             </div>
         </main>
 
-        <!-- Scroll to Top Button -->
-        <button class="scroll-to-top" id="scroll-to-top" aria-label="Вернуться наверх" title="Наверх">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                    d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
-                    clip-rule="evenodd" />
-            </svg>
-        </button>
+
 
         <footer class="footer" role="contentinfo">
             <p>&copy; 2025 Notitled. Создано с любовью к минимализму.</p>
         </footer>
     </div>
 
-    <!-- Marked.js для парсинга Markdown с SRI -->
-    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"
-        integrity="sha512-oSA0PdOBsyP4Cv5rIHOWhOr+H0ZPOE/L8UKaX33DjBFD+TrWOZZfewjg85Z7WhNPkQrHeTKOYSio/XM6FBPhWA=="
-        crossorigin="anonymous"></script>
-    <script type="module" src="assets/js/app.js?v=7"></script>
+    <script src="assets/js/core/config.js" type="module"></script>
+    <script src="assets/js/vendor/marked.min.js"></script>
+    <script type="module" src="assets/js/core/app.js"></script>
 </body>
 
 </html>

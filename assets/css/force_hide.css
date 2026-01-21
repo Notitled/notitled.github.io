@@ -1,0 +1,4 @@
+/* CSS Failsafe to hide persistent share popup title */
+.share-popup-header span {
+    display: none !important;
+}

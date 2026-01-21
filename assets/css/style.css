@@ -1,105 +1,12 @@
 /* ========================================
-   RESET & BASE STYLES
+   MODULAR CSS ARCHITECTURE
    ======================================== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
-:root {
-    /* Light Theme Colors */
-    --bg-primary: #ffffff;
-    --bg-secondary: #fafafa;
-    --bg-hover: #f5f5f5;
-    --text-primary: #1a1a1a;
-    --text-secondary: #666666;
-    --text-tertiary: #999999;
-    --border-color: #e8e8e8;
-    --accent-color: #0066ff;
-    --accent-hover: #0052cc;
-    --shadow-color: rgba(0, 0, 0, 0.08);
-
-    /* Spacing */
-    --spacing-xs: 0.5rem;
-    --spacing-sm: 1rem;
-    --spacing-md: 1.5rem;
-    --spacing-lg: 2rem;
-    --spacing-xl: 3rem;
-    --spacing-2xl: 4rem;
-
-    /* Typography */
-    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --font-size-sm: 0.875rem;
-    --font-size-base: 1rem;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.5rem;
-    --font-size-2xl: 2rem;
-    --font-size-3xl: 2.5rem;
-
-    /* Line Heights */
-    --line-height-tight: 1.2;
-    --line-height-normal: 1.5;
-    --line-height-relaxed: 1.75;
-
-    /* Transitions */
-    --transition-fast: 150ms ease;
-    --transition-base: 250ms ease;
-
-    /* Layout */
-    --max-width: 720px;
-    --max-width-wide: 1100px;
-    --border-radius: 8px;
-}
-
-/* Dark Theme */
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-        --bg-primary: #1a1a1a;
-        --bg-secondary: #2a2a2a;
-        --bg-hover: #333333;
-        --text-primary: #e8e8e8;
-        --text-secondary: #a8a8a8;
-        --text-tertiary: #707070;
-        --border-color: #404040;
-        --accent-color: #3b82f6;
-        --accent-hover: #60a5fa;
-        --shadow-color: rgba(0, 0, 0, 0.3);
-    }
-}
-
-[data-theme="dark"] {
-    --bg-primary: #1a1a1a;
-    --bg-secondary: #2a2a2a;
-    --bg-hover: #333333;
-    --text-primary: #e8e8e8;
-    --text-secondary: #a8a8a8;
-    --text-tertiary: #707070;
-    --border-color: #404040;
-    --accent-color: #3b82f6;
-    --accent-hover: #60a5fa;
-    --shadow-color: rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="light"] {
-    --bg-primary: #ffffff;
-    --bg-secondary: #fafafa;
-    --bg-hover: #f5f5f5;
-    --text-primary: #1a1a1a;
-    --text-secondary: #666666;
-    --text-tertiary: #999999;
-    --border-color: #e8e8e8;
-    --accent-color: #0066ff;
-    --accent-hover: #0052cc;
-    --shadow-color: rgba(0, 0, 0, 0.08);
-}
-
-html {
-    font-size: 16px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    scroll-behavior: smooth;
-}
+@import "modules/variables.css";
+@import "modules/reset.css";
+@import "modules/animations.css";
+@import "modules/components.css";
+@import "modules/layouts.css";
 
 body {
     font-family: var(--font-family);
@@ -590,7 +497,36 @@ body {
 }
 
 .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-xl);
     margin-bottom: var(--spacing-xl);
+}
+
+.post-header-main {
+    flex: 1;
+}
+
+.post-header-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--spacing-md);
+    min-width: 200px;
+    flex-shrink: 0;
+    padding-top: 0.6rem;
+}
+
+/* Adjust tags alignment in header */
+.post-header-side .post-tags {
+    justify-content: flex-end;
+    margin-top: 0;
+}
+
+/* Adjust actions alignment in header */
+.post-header-side .post-header-actions {
+    margin-top: 0;
 }
 
 .post-date {
@@ -612,17 +548,7 @@ body {
     text-wrap: balance;
 }
 
-/* Reading Progress Bar */
-.reading-progress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent-color), var(--accent-hover));
-    z-index: 1000;
-    transition: width 0.1s ease;
-}
+
 
 /* ========================================
    MARKDOWN CONTENT STYLES
@@ -774,41 +700,7 @@ body {
     color: var(--accent-hover);
 }
 
-/* ========================================
-   SCROLL TO TOP BUTTON
-   ======================================== */
-.scroll-to-top {
-    position: fixed;
-    bottom: var(--spacing-lg);
-    right: var(--spacing-lg);
-    width: 48px;
-    height: 48px;
-    border: none;
-    border-radius: 50%;
-    background-color: var(--accent-color);
-    color: white;
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all var(--transition-base);
-    box-shadow: 0 4px 12px var(--shadow-color);
-    z-index: 99;
-}
 
-.scroll-to-top.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.scroll-to-top:hover {
-    background-color: var(--accent-hover);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px var(--shadow-color);
-}
-
-.scroll-to-top:active {
-    transform: translateY(-2px);
-}
 
 /* ========================================
    TAGS
@@ -1066,7 +958,6 @@ body {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
-    margin-top: var(--spacing-sm);
 }
 
 .share-popup {
@@ -1087,34 +978,36 @@ body {
     transform: translateY(0);
 }
 
-.share-popup-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-bottom: 1px solid var(--border-color);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    color: var(--text-secondary);
-}
+/* CSS Failsafe removed as we removed the header */
 
 .share-popup-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
     background: none;
     border: none;
     font-size: var(--font-size-xl);
     color: var(--text-tertiary);
     cursor: pointer;
-    padding: 0;
-    line-height: 1;
-    transition: color var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+    z-index: 10;
 }
 
 .share-popup-close:hover {
     color: var(--text-primary);
+    background-color: var(--bg-hover);
 }
 
 .share-popup-options {
     padding: var(--spacing-xs);
+    padding-top: var(--spacing-lg);
+    /* Space for close button */
 }
 
 .share-option {
@@ -1180,6 +1073,23 @@ body {
         --spacing-2xl: 2.5rem;
     }
 
+    .post-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .post-header-side {
+        align-items: flex-start;
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .post-header-side .post-tags {
+        justify-content: flex-start;
+    }
+
     .header-content {
         flex-wrap: wrap;
     }
@@ -1203,12 +1113,7 @@ body {
         height: 240px;
     }
 
-    .scroll-to-top {
-        bottom: var(--spacing-sm);
-        right: var(--spacing-sm);
-        width: 44px;
-        height: 44px;
-    }
+
 
     .pagination {
         flex-wrap: wrap;

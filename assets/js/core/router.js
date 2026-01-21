@@ -9,7 +9,6 @@ export class Router {
     constructor(onNavigate) {
         this.currentView = 'home';
         this.currentSlug = null;
-        this.currentTag = null;
         this.currentPage = 1;
         this.onNavigate = onNavigate;
         this.navLinks = document.querySelectorAll('.nav-link');
@@ -45,7 +44,6 @@ export class Router {
             if (e.state) {
                 this.currentView = e.state.view;
                 this.currentSlug = e.state.slug;
-                this.currentTag = e.state.tag || null;
                 this.currentPage = e.state.page || 1;
                 this.onNavigate(this.currentView, this.currentSlug, false);
             }
@@ -58,19 +56,14 @@ export class Router {
     handleInitialRoute() {
         const hash = window.location.hash.slice(1);
         if (hash) {
-            // Check for tag route: tag/tagname
-            if (hash.startsWith('tag/')) {
-                const tag = decodeURIComponent(hash.slice(4));
-                this.navigateTo('tag', tag, false);
-            }
             // Check for page route: page/2
-            else if (hash.startsWith('page/')) {
+            if (hash.startsWith('page/')) {
                 const page = parseInt(hash.slice(5)) || 1;
                 this.currentPage = page;
                 this.navigateTo('home', null, false);
             }
             // Static pages
-            else if (['search', 'contacts', 'tags'].includes(hash)) {
+            else if (['search', 'contacts'].includes(hash)) {
                 this.navigateTo(hash, null, false);
             }
             // Assume it's a post slug
@@ -82,8 +75,8 @@ export class Router {
 
     /**
      * Navigate to a new view
-     * @param {string} view - View name (home, post, search, contacts, tag, tags)
-     * @param {string|null} slug - Post slug, tag name, or null
+     * @param {string} view - View name (home, post, search, contacts)
+     * @param {string|null} slug - Post slug or null
      * @param {boolean} pushState - Whether to push to browser history
      */
     navigateTo(view, slug = null, pushState = true) {
@@ -95,12 +88,6 @@ export class Router {
             this.currentPage = 1;
         }
 
-        // Set tag for tag view
-        if (view === 'tag') {
-            this.currentTag = slug;
-        } else {
-            this.currentTag = null;
-        }
 
         // Update active nav link
         this.updateActiveNavLink(view);
@@ -108,7 +95,7 @@ export class Router {
         // Update URL
         if (pushState) {
             const url = this.buildUrl(view, slug);
-            history.pushState({ view, slug, tag: this.currentTag, page: this.currentPage }, '', url);
+            history.pushState({ view, slug, page: this.currentPage }, '', url);
         }
 
         // Notify app of navigation
@@ -134,8 +121,6 @@ export class Router {
      */
     buildUrl(view, slug) {
         switch (view) {
-            case 'tag':
-                return `#tag/${encodeURIComponent(slug)}`;
             case 'post':
                 return `#${slug}`;
             case 'home':
@@ -152,22 +137,19 @@ export class Router {
     updateActiveNavLink(view) {
         this.navLinks.forEach(link => {
             const linkPage = link.dataset.page;
-            // Home is active for home, tag views
-            const isActive = linkPage === view ||
-                (linkPage === 'home' && (view === 'tag' || view === 'tags'));
+            const isActive = linkPage === view;
             link.classList.toggle('active', isActive);
         });
     }
 
     /**
      * Get current route info
-     * @returns {{view: string, slug: string|null, tag: string|null, page: number}}
+     * @returns {{view: string, slug: string|null, page: number}}
      */
     getCurrentRoute() {
         return {
             view: this.currentView,
             slug: this.currentSlug,
-            tag: this.currentTag,
             page: this.currentPage
         };
     }

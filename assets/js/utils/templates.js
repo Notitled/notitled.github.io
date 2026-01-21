@@ -2,32 +2,28 @@
 // HTML TEMPLATES
 // ============================================
 
-import { CONFIG, CONTACTS } from './config.js';
+import { CONFIG, CONTACTS } from '../core/config.js';
 import { formatDate, escapeHtml } from './utils.js';
+import { i18n } from '../features/language.js';
+
 
 /**
- * Render tags for a post
- * @param {Array} tags - Tag names
- * @returns {string} HTML string
+ * @typedef {Object} Post
+ * @property {string} slug
+ * @property {string} title
+ * @property {string} excerpt
+ * @property {string} date
+ * @property {string} [preview]
+ * @property {string[]} [tags]
  */
-export function renderTags(tags) {
-    if (!tags || tags.length === 0) return '';
-
-    const tagsHTML = tags.map(tag =>
-        `<a href="#tag/${encodeURIComponent(tag)}" class="tag" data-tag="${escapeHtml(tag)}">${escapeHtml(tag)}</a>`
-    ).join('');
-
-    return `<div class="post-tags">${tagsHTML}</div>`;
-}
 
 /**
  * Render a single post card
- * @param {Object} post - Post metadata
+ * @param {Post} post - Post metadata
  * @param {number} index - Card index for animation delay
- * @param {boolean} showTags - Whether to show tags
  * @returns {string} HTML string
  */
-export function renderPostCard(post, index = 0, showTags = true) {
+export function renderPostCard(post, index = 0) {
     const previewHTML = post.preview ? `
         <div class="post-card-preview">
             <img src="${escapeHtml(post.preview)}" 
@@ -36,7 +32,6 @@ export function renderPostCard(post, index = 0, showTags = true) {
         </div>
     ` : '';
 
-    const tagsHTML = showTags ? renderTags(post.tags) : '';
 
     return `
         <article class="post-card" data-slug="${post.slug}" style="animation-delay: ${index * CONFIG.ANIMATION_DELAY_INCREMENT}ms">
@@ -45,9 +40,8 @@ export function renderPostCard(post, index = 0, showTags = true) {
                 <div class="post-card-date">${formatDate(post.date)}</div>
                 <h2 class="post-card-title">${escapeHtml(post.title)}</h2>
                 <p class="post-card-excerpt">${escapeHtml(post.excerpt)}</p>
-                ${tagsHTML}
                 <div class="post-card-meta">
-                    <span class="post-card-read-more">Читать далее</span>
+                    <span class="post-card-read-more">${i18n.t('post.readMore')}</span>
                 </div>
             </div>
         </article>
@@ -64,8 +58,8 @@ export function renderPostsList(posts, pagination = null) {
     if (posts.length === 0) {
         return `
             <div class="empty-state">
-                <h2>Пока нет постов</h2>
-                <p>Добавьте свой первый пост в папку <code>posts/</code></p>
+                <h2>${i18n.t('post.noPosts')}</h2>
+                <p>${i18n.t('post.addFirst')} <code>posts/</code></p>
             </div>
         `;
     }
@@ -82,14 +76,13 @@ export function renderPostsList(posts, pagination = null) {
 }
 
 /**
- * Render pagination controls
- * @param {Object} pagination - {currentPage, totalPages, hasNext, hasPrev}
+ * Render pagination
+ * @param {import('../core/types.js').PaginationInfo} pagination - Pagination data
  * @returns {string} HTML string
  */
 export function renderPagination(pagination) {
-    if (!pagination || pagination.totalPages <= 1) return '';
-
-    const { currentPage, totalPages, hasNext, hasPrev } = pagination;
+    const { totalPages, currentPage, hasNext, hasPrev } = pagination;
+    if (!pagination || totalPages <= 1) return '';
 
     let pagesHTML = '';
     for (let i = 1; i <= totalPages; i++) {
@@ -98,49 +91,51 @@ export function renderPagination(pagination) {
     }
 
     return `
-        <nav class="pagination" aria-label="Навигация по страницам">
+        <nav class="pagination" aria-label="${i18n.t('pagination.label')}">
             <button class="pagination-btn pagination-prev" ${!hasPrev ? 'disabled' : ''} data-page="${currentPage - 1}">
-                ← Назад
+                ← ${i18n.t('pagination.prev')}
             </button>
             <div class="pagination-pages">
                 ${pagesHTML}
             </div>
             <button class="pagination-btn pagination-next" ${!hasNext ? 'disabled' : ''} data-page="${currentPage + 1}">
-                Вперёд →
+                ${i18n.t('pagination.next')} →
             </button>
         </nav>
     `;
 }
 
 /**
- * Render single post view with tags
- * @param {Object} post - Post metadata
+ * Render single post view
+ * @param {Post} post - Post metadata
  * @param {string} content - Parsed HTML content
  * @param {number} readTime - Reading time in minutes
- * @param {string} tocHTML - Table of contents HTML (optional)
+ * @param {string} [tocHTML] - Table of contents HTML (optional)
  * @returns {string} HTML string
  */
 export function renderPost(post, content, readTime, tocHTML = '') {
-    const tagsHTML = renderTags(post.tags);
 
     return `
         <article class="post-view">
-            <a href="#" class="back-button">Назад к постам</a>
+            <a href="#" class="back-button">${i18n.t('post.back')}</a>
             <header class="post-header">
-                <div class="post-date">${formatDate(post.date)} • ${readTime} мин чтения</div>
-                <h1 class="post-title">${escapeHtml(post.title)}</h1>
-                ${tagsHTML}
-                <div class="post-header-actions">
-                    <button class="share-button" data-slug="${post.slug}" data-title="${escapeHtml(post.title)}" data-excerpt="${escapeHtml(post.excerpt)}" aria-label="Поделиться статьёй">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="18" cy="5" r="3"/>
-                            <circle cx="6" cy="12" r="3"/>
-                            <circle cx="18" cy="19" r="3"/>
-                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                        </svg>
-                        <span>Поделиться</span>
-                    </button>
+                <div class="post-header-main">
+                    <h1 class="post-title">${escapeHtml(post.title)}</h1>
+                    <div class="post-date">${formatDate(post.date)} • ${readTime} ${i18n.t('post.readTime')}</div>
+                </div>
+                <div class="post-header-side">
+                    <div class="post-header-actions">
+                        <button class="share-button" data-slug="${post.slug}" data-title="${escapeHtml(post.title)}" data-excerpt="${escapeHtml(post.excerpt)}" aria-label="${i18n.t('post.share')}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"/>
+                                <circle cx="6" cy="12" r="3"/>
+                                <circle cx="18" cy="19" r="3"/>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                            </svg>
+                            <span>${i18n.t('post.share')}</span>
+                        </button>
+                    </div>
                 </div>
             </header>
             ${tocHTML}
@@ -151,62 +146,6 @@ export function renderPost(post, content, readTime, tocHTML = '') {
     `;
 }
 
-/**
- * Render tags cloud page
- * @param {Array} tags - Array of {name, count}
- * @returns {string} HTML string
- */
-export function renderTagsPage(tags) {
-    if (tags.length === 0) {
-        return `
-            <div class="tags-page">
-                <h1>Теги</h1>
-                <div class="empty-state">
-                    <p>Пока нет тегов</p>
-                </div>
-            </div>
-        `;
-    }
-
-    const tagsHTML = tags.map(tag => `
-        <a href="#tag/${encodeURIComponent(tag.name)}" class="tag-cloud-item">
-            <span class="tag-name">${escapeHtml(tag.name)}</span>
-            <span class="tag-count">${tag.count}</span>
-        </a>
-    `).join('');
-
-    return `
-        <div class="tags-page">
-            <h1>Теги</h1>
-            <div class="tags-cloud">
-                ${tagsHTML}
-            </div>
-        </div>
-    `;
-}
-
-/**
- * Render posts filtered by tag
- * @param {string} tagName - Tag name
- * @param {Array} posts - Filtered posts
- * @returns {string} HTML string
- */
-export function renderTagPosts(tagName, posts) {
-    const postsHTML = posts.length > 0
-        ? posts.map((post, index) => renderPostCard(post, index)).join('')
-        : '<div class="empty-state"><p>Нет постов с этим тегом</p></div>';
-
-    return `
-        <div class="tag-posts-page">
-            <a href="#" class="back-button">Все посты</a>
-            <h1>Тег: ${escapeHtml(tagName)}</h1>
-            <p class="tag-posts-count">Постов: ${posts.length}</p>
-            <div class="posts-grid">
-                ${postsHTML}
-            </div>
-        </div>
-    `;
-}
 
 /**
  * Render search page
@@ -215,13 +154,13 @@ export function renderTagPosts(tagName, posts) {
 export function renderSearchPage() {
     return `
         <div class="search-page">
-            <h1>Поиск по постам</h1>
+            <h1>${i18n.t('search.title')}</h1>
             
             <div class="search-container-page">
                 <input type="search" 
                        class="search-input" 
                        id="search-page-input" 
-                       placeholder="Начните вводить для поиска..." 
+                       placeholder="${i18n.t('search.placeholder')}" 
                        autocomplete="off" 
                        autofocus>
                 <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
@@ -230,7 +169,7 @@ export function renderSearchPage() {
             </div>
             
             <div id="search-results" class="search-results">
-                <p class="search-hint">Введите запрос для поиска по заголовкам и описаниям постов</p>
+                <p class="search-hint">${i18n.t('search.hint')}</p>
             </div>
         </div>
     `;
@@ -238,11 +177,11 @@ export function renderSearchPage() {
 
 /**
  * Render search results
- * @param {Array} results - Matching posts
+ * @param {import('../core/types.js').Post[]} results - Search results
  * @param {string} query - Search query
  * @returns {string} HTML string
  */
-export function renderSearchResults(results, query) {
+export function renderSearchResults(results = [], query) {
     if (!query.trim()) {
         return '<p class="search-hint">Введите запрос для поиска по заголовкам и описаниям постов</p>';
     }
@@ -250,8 +189,8 @@ export function renderSearchResults(results, query) {
     if (results.length === 0) {
         return `
             <div class="empty-state">
-                <h2>🔍 Ничего не найдено</h2>
-                <p>Попробуйте изменить поисковый запрос</p>
+                <h2>🔍 ${i18n.t('search.empty')}</h2>
+                <p>${i18n.t('search.emptyTip')}</p>
             </div>
         `;
     }
@@ -259,7 +198,7 @@ export function renderSearchResults(results, query) {
     const postsHTML = results.map((post, index) => renderPostCard(post, index)).join('');
 
     return `
-        <p class="search-count">Найдено постов: ${results.length}</p>
+        <p class="search-count">${i18n.t('search.countPrefix')} ${results.length}</p>
         <div class="posts-grid">
             ${postsHTML}
         </div>
@@ -273,7 +212,7 @@ export function renderSearchResults(results, query) {
 export function renderContactsPage() {
     return `
         <div class="contacts-page">
-            <h1>Контакты</h1>
+            <h1>${i18n.t('contacts.title')}</h1>
             
             <div class="contact-item">
                 <label>Email</label>
@@ -318,5 +257,5 @@ export function renderContactsPage() {
  * @returns {string} HTML string
  */
 export function renderError() {
-    return '<div class="error">Пост не найден</div>';
+    return `<div class="error">${i18n.t('post.notFound')}</div>`;
 }

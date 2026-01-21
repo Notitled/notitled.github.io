@@ -2,7 +2,7 @@
 // CACHE MANAGER
 // ============================================
 
-import { CONFIG } from './config.js';
+import { CONFIG } from '../core/config.js';
 
 /**
  * Manages caching with localStorage and in-memory Map

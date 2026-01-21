@@ -9,12 +9,15 @@ const fs = require('fs');
 const path = require('path');
 
 // Configuration
+const siteConfig = require('../site.config.json');
+
+// Configuration
 const CONFIG = {
-    BLOG_URL: 'https://sadcadf.github.io/notitled.github.io',
-    BLOG_NAME: 'Notitled',
-    BLOG_DESCRIPTION: 'Личный минималистичный блог о технологиях, разработке и творчестве',
-    BLOG_LANGUAGE: 'ru-RU',
-    AUTHOR: 'Notitled'
+    BLOG_URL: siteConfig.url,
+    BLOG_NAME: siteConfig.name,
+    BLOG_DESCRIPTION: siteConfig.description,
+    BLOG_LANGUAGE: siteConfig.language,
+    AUTHOR: siteConfig.author
 };
 
 // Paths

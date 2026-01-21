@@ -11,17 +11,9 @@ export interface Post {
     excerpt: string;
     date: string;
     preview?: string;
-    tags?: string[];
     category?: string;
 }
 
-/**
- * Tag with count
- */
-export interface TagInfo {
-    name: string;
-    count: number;
-}
 
 /**
  * Pagination info
@@ -51,7 +43,6 @@ export interface PaginatedResult<T> {
 export interface RouteInfo {
     view: string;
     slug: string | null;
-    tag: string | null;
     page: number;
 }
 
