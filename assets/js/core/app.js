@@ -88,9 +88,7 @@ class Blog {
         if (typeof marked !== 'undefined') {
             marked.setOptions({
                 breaks: true,
-                gfm: true,
-                headerIds: true,
-                mangle: false
+                gfm: true
             });
         }
     }
